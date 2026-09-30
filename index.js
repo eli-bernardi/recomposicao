@@ -1,0 +1,46 @@
+const express = require('express')
+const app = express()
+const cors = require('cors')
+
+const PORT = 3000
+const hostname = 'localhost'
+
+const conn = require('./db/conn')
+
+// relacionamentos para poder trabalhar os relacionamentos
+// require('./models/rel')
+
+const dispositivoController = require('./controller/dispositivo.controller')
+const agendamentoController = require('./controller/agendamento.controller')
+const clienteController = require('./controller/cliente.controller')
+
+
+// ------------ Middleware ------------
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(cors())
+
+// Rotas Públicas
+app.post('/cliente', clienteController.cadastrar)
+// app.post('/login', authController.login)
+
+
+
+app.get('/', (req, res) => {
+    res.status(200).json({ message: "Aplicação rodando!" })
+})
+
+// Rotas Privadas
+
+
+
+// ----- sincronizando o servidor com o Banco de Dados -----
+conn.sync()
+    .then(() => {
+        app.listen(PORT, hostname, () => {
+            console.log(`Servidor rodando em ${hostname}:${PORT}`)
+        })
+    })
+    .catch((err) => {
+        console.error('Erro ao conectar com o banco de dados!', err)
+    })
